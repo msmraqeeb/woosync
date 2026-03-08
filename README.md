@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# WooSync Inventory Setup Instructions
 
-## Getting Started
+Welcome to your WooSync Inventory application! This app is ready to connect bi-directionally with your WooCommerce store.
 
-First, run the development server:
+## 1. Environment Connections
+To connect the app to your store, open `.env.local` and add your exact WooCommerce credentials:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+WOOCOMMERCE_URL=https://your-store-url.com
+WOOCOMMERCE_CONSUMER_KEY=ck_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+WOOCOMMERCE_CONSUMER_SECRET=cs_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+You can generate these keys in your WordPress Admin Panel -> WooCommerce -> Settings -> Advanced -> REST API -> Add Key.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 2. Webhook Setup
+To ensure the app reflects changes instantly when an order or product is updated on the website, you must set up Webhooks in WooCommerce.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Go to **WooCommerce > Settings > Advanced > Webhooks**.
+2. Click **Add webhook**.
+3. Create webhooks for the following topics:
+   - `Product updated`
+   - `Order created`
+   - `Order updated`
+   - `Customer created`
+4. Set the **Delivery URL** to your hosted app's webhook route: 
+   `https://[your-app-domain]/api/webhooks/woocommerce`
+5. Status should be **Active**.
 
-## Learn More
+## 3. Running the App
+To start the app locally:
+```bash
+npm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Visit [http://localhost:3000](http://localhost:3000) to view your dashboard!
