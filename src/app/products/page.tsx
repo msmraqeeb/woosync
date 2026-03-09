@@ -40,6 +40,7 @@ export default function ProductsPage() {
     const [editStock, setEditStock] = useState("");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     // Inline editing state
     const [inlineEditing, setInlineEditing] = useState<{ id: number, field: 'name' | 'sku' | 'status' | 'regular_price' | 'stock_quantity', isVariation?: boolean, parentId?: number } | null>(null);
@@ -77,14 +78,18 @@ export default function ProductsPage() {
         try {
             const res = await fetch(`/api/products?page=${currentPage}&per_page=20&search=${encodeURIComponent(search)}`);
             const json = await res.json();
-            if (json.products) {
+            if (json.error) {
+                setError(json.error);
+            } else if (json.products) {
                 setProducts(json.products);
                 setTotalPages(parseInt(json.totalPages) || 1);
                 setTotalItems(parseInt(json.total) || 0);
                 setInputPage(currentPage.toString());
+                setError(null);
             }
-        } catch (e) {
+        } catch (e: any) {
             console.error(e);
+            setError("Failed to fetch products. Error: " + e.message);
         } finally {
             setLoading(false);
         }
@@ -307,6 +312,11 @@ export default function ProductsPage() {
 
     return (
         <div className="flex flex-1 flex-col gap-4">
+            {error && (
+                <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive text-sm font-medium">
+                    ⚠️ Error: {error}
+                </div>
+            )}
             <div className="flex items-center">
                 <h1 className="text-lg font-semibold md:text-2xl">Products</h1>
             </div>

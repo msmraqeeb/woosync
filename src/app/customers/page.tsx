@@ -22,6 +22,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 export default function CustomersPage() {
     const [customers, setCustomers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         fetchCustomers();
@@ -32,9 +33,15 @@ export default function CustomersPage() {
         try {
             const res = await fetch("/api/customers?per_page=20");
             const json = await res.json();
-            if (json.customers) setCustomers(json.customers);
-        } catch (e) {
+            if (json.error) {
+                setError(json.error);
+            } else if (json.customers) {
+                setCustomers(json.customers);
+                setError(null);
+            }
+        } catch (e: any) {
             console.error(e);
+            setError("Failed to fetch customers: " + e.message);
         } finally {
             setLoading(false);
         }
@@ -42,6 +49,11 @@ export default function CustomersPage() {
 
     return (
         <div className="flex flex-1 flex-col gap-4">
+            {error && (
+                <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive text-sm font-medium">
+                    ⚠️ Error: {error}
+                </div>
+            )}
             <div className="flex items-center">
                 <h1 className="text-lg font-semibold md:text-2xl">Customers</h1>
             </div>

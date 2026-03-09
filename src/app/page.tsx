@@ -28,22 +28,34 @@ export default function Dashboard() {
     recentOrders: [],
   });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/dashboard")
       .then((res) => res.json())
       .then((json) => {
-        if (!json.error) setData(json);
+        if (json.error) {
+          setError(json.error);
+        } else {
+          setData(json);
+        }
         setLoading(false);
       })
       .catch((err) => {
         console.error("Error fetching dashboard data", err);
+        setError("Failed to connect to WooCommerce API. Check your environment variables.");
         setLoading(false);
       });
   }, []);
 
   return (
     <div className="flex flex-1 flex-col gap-4 md:gap-8">
+      {error && (
+        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive text-sm font-medium">
+          ⚠️ Error: {error}
+          <p className="mt-1 text-xs opacity-80">Make sure your WOOCOMMERCE_URL and API keys are correctly set in Vercel.</p>
+        </div>
+      )}
       <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
         <Card x-chunk="dashboard-01-chunk-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

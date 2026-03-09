@@ -46,6 +46,7 @@ export default function OrdersPage() {
     const [editStatus, setEditStatus] = useState("");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [inlineEditingId, setInlineEditingId] = useState<number | null>(null);
     const [inlineSaving, setInlineSaving] = useState(false);
 
@@ -69,9 +70,15 @@ export default function OrdersPage() {
         try {
             const res = await fetch("/api/orders?per_page=20");
             const json = await res.json();
-            if (json.orders) setOrders(json.orders);
-        } catch (e) {
+            if (json.error) {
+                setError(json.error);
+            } else if (json.orders) {
+                setOrders(json.orders);
+                setError(null);
+            }
+        } catch (e: any) {
             console.error(e);
+            setError("Failed to fetch orders: " + e.message);
         } finally {
             setLoading(false);
         }
@@ -227,6 +234,11 @@ export default function OrdersPage() {
 
     return (
         <div className="flex flex-1 flex-col gap-4">
+            {error && (
+                <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive text-sm font-medium">
+                    ⚠️ Error: {error}
+                </div>
+            )}
             <div className="flex items-center">
                 <h1 className="text-lg font-semibold md:text-2xl">Orders</h1>
             </div>
