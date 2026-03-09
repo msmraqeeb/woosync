@@ -13,6 +13,7 @@ export async function PUT(
         const response = await api.put(`products/${routeParams.id}`, body);
         return NextResponse.json(response.data);
     } catch (error: any) {
+        console.error("API Error (Products PUT):", error.response?.data || error.message);
         return NextResponse.json(
             { error: error.response?.data?.message || error.message },
             { status: 500 }
@@ -29,6 +30,7 @@ export async function DELETE(
         const response = await api.delete(`products/${routeParams.id}`, { force: true });
         return NextResponse.json(response.data);
     } catch (error: any) {
+        console.error("API Error (Products DELETE):", error.response?.data || error.message);
         return NextResponse.json(
             { error: error.response?.data?.message || error.message },
             { status: 500 }

@@ -33,6 +33,7 @@ export async function GET() {
             recentOrders,
         });
     } catch (error: any) {
+        console.error("API Error (Dashboard):", error.response?.data || error.message);
         return NextResponse.json(
             { error: error.response?.data?.message || error.message },
             { status: 500 }

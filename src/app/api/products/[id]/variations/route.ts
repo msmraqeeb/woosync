@@ -12,6 +12,7 @@ export async function GET(
         const response = await api.get(`products/${routeParams.id}/variations`);
         return NextResponse.json(response.data);
     } catch (error: any) {
+        console.error("API Error (Product Variations GET):", error.response?.data || error.message);
         return NextResponse.json(
             { error: error.response?.data?.message || error.message },
             { status: 500 }

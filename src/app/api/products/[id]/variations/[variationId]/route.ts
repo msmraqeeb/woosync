@@ -13,6 +13,7 @@ export async function PUT(
         const response = await api.put(`products/${routeParams.id}/variations/${routeParams.variationId}`, body);
         return NextResponse.json(response.data);
     } catch (error: any) {
+        console.error("API Error (Product Variation PUT):", error.response?.data || error.message);
         return NextResponse.json(
             { error: error.response?.data?.message || error.message },
             { status: 500 }

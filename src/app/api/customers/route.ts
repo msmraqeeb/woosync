@@ -21,6 +21,7 @@ export async function GET(request: Request) {
             totalPages: response.headers["x-wp-totalpages"],
         });
     } catch (error: any) {
+        console.error("API Error (Customers):", error.response?.data || error.message);
         return NextResponse.json(
             { error: error.response?.data?.message || error.message },
             { status: 500 }

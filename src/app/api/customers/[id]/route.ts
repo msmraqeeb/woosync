@@ -13,6 +13,7 @@ export async function PUT(
         const response = await api.put(`customers/${routeParams.id}`, body);
         return NextResponse.json(response.data);
     } catch (error: any) {
+        console.error("API Error (Customers PUT):", error.response?.data || error.message);
         return NextResponse.json(
             { error: error.response?.data?.message || error.message },
             { status: 500 }
