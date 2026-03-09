@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { api } from "@/lib/woocommerce";
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
     try {
         // Fetch summary stats concurrently
