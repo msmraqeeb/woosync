@@ -87,9 +87,9 @@ export default function ProductsPage() {
                 setInputPage(currentPage.toString());
                 setError(null);
             }
-        } catch (e: any) {
-            console.error(e);
-            setError("Failed to fetch products. Error: " + e.message);
+        } catch (err: any) {
+            console.error("Error fetching products:", err);
+            setError(`Connection failed: ${err.message || 'Unknown error'}`);
         } finally {
             setLoading(false);
         }

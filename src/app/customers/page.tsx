@@ -39,9 +39,9 @@ export default function CustomersPage() {
                 setCustomers(json.customers);
                 setError(null);
             }
-        } catch (e: any) {
-            console.error(e);
-            setError("Failed to fetch customers: " + e.message);
+        } catch (err: any) {
+            console.error("Error fetching orders:", err);
+            setError(`Connection failed: ${err.message || 'Unknown error'}`);
         } finally {
             setLoading(false);
         }
