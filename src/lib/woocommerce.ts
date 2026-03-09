@@ -3,8 +3,8 @@ import https from 'https';
 
 const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build';
 
-// The actual store URL
-const rawUrl = "https://kidsparadise.com.bd/";
+// The actual store URL - trying with 'www' as many stores require it
+const rawUrl = "https://www.kidsparadise.com.bd/";
 
 // Extremely robust URL cleaning
 let cleanUrl = rawUrl.trim();
@@ -42,17 +42,17 @@ if (!isBuildTime) {
         console.log(`✅ Response: [${response.status}] ${response.statusText}`);
         return response;
     }, (error: any) => {
-        let errorMsg = error.message;
-
         // Detailed HTML Error Extraction
         if (error.response?.data && typeof error.response.data === 'string' && error.response.data.includes('<!DOCTYPE html>')) {
             const titleMatch = error.response.data.match(/<title>(.*?)<\/title>/);
             const pageTitle = titleMatch ? titleMatch[1] : "HTML Error Page";
-            // Attach the nicer message so API routes can use it
-            error.message = errorMsg;
+
+            console.error(`❌ HTML received: "${pageTitle}"`);
+            // OVERRIDE the error message so the UI can show it
+            error.message = `Server blocked request (HTML Error: "${pageTitle}"). Check Firewall or SSL.`;
         }
 
-        console.error(`❌ WooCommerce Response Error: [${error.response?.status || 'NETWORK_ERROR'}] ${error.config?.url}`);
+        console.error(`❌ WooCommerce Error: [${error.response?.status || 'NETWORK_ERROR'}] ${error.message}`);
         return Promise.reject(error);
     });
 }
