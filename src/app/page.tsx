@@ -43,7 +43,7 @@ export default function Dashboard() {
       })
       .catch((err) => {
         console.error("Error fetching dashboard data", err);
-        setError("Failed to connect to WooCommerce API. Check your environment variables.");
+        setError(`Connection failed: ${err.message}`);
         setLoading(false);
       });
   }, []);

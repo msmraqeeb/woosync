@@ -33,10 +33,15 @@ export async function GET() {
             recentOrders,
         });
     } catch (error: any) {
-        console.error("API Error (Dashboard):", error.response?.data || error.message);
+        const errorMsg = error.response?.data?.message || error.response?.data || error.message;
+        console.error("❌ API Error:", errorMsg);
+        if (error.response) {
+            console.error("Status:", error.response.status);
+            console.error("Data:", JSON.stringify(error.response.data));
+        }
         return NextResponse.json(
-            { error: error.response?.data?.message || error.message },
-            { status: 500 }
+            { error: errorMsg },
+            { status: error.response?.status || 500 }
         );
     }
 }
