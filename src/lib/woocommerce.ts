@@ -3,14 +3,14 @@ import https from 'https';
 
 const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build';
 
-if (!isBuildTime && (!process.env.WOOCOMMERCE_URL || process.env.WOOCOMMERCE_URL === "https://example.com")) {
-    console.warn("⚠️ WOOCOMMERCE_URL is missing or using default. Data may not load.");
-}
+const rawUrl = "https://kidsparadise.com.bd/";
+// Clean URL: remove trailing slashes and common path suffixes that might cause double-pathing
+const cleanUrl = rawUrl.replace(/\/wp-json\/wc\/v3\/?$/, '').replace(/\/wp-json\/?$/, '').replace(/\/$/, '');
 
 export const api = new WooCommerceRestApi({
-    url: process.env.WOOCOMMERCE_URL || "https://example.com",
-    consumerKey: process.env.WOOCOMMERCE_CONSUMER_KEY || "ck_dummy",
-    consumerSecret: process.env.WOOCOMMERCE_CONSUMER_SECRET || "cs_dummy",
+    url: cleanUrl,
+    consumerKey: "ck_45d6fe6dd079f9efb7a97c70bb3a4e8e7ce2542b",
+    consumerSecret: "cs_472c0fbb8e9945178eae3b15840611e785521a90",
     version: "wc/v3",
     queryStringAuth: true,
     axiosConfig: {
@@ -19,3 +19,11 @@ export const api = new WooCommerceRestApi({
         })
     }
 });
+
+// Debug interceptor to see exactly what we are requesting
+if (!isBuildTime) {
+    (api as any).axios.interceptors.request.use((config: any) => {
+        console.log(`🚀 WooCommerce Request: [${config.method?.toUpperCase()}] ${config.url}`, config.params);
+        return config;
+    });
+}
