@@ -69,7 +69,16 @@ export default function OrdersPage() {
         setLoading(true);
         try {
             const res = await fetch("/api/orders?per_page=20");
-            const json = await res.json();
+            const contentType = res.headers.get("content-type");
+
+            let json;
+            if (contentType && contentType.includes("application/json")) {
+                json = await res.json();
+            } else {
+                const text = await res.text();
+                throw new Error(`Expected JSON but got ${contentType || 'unknown'}. Body Snippet: ${text.substring(0, 100)}`);
+            }
+
             if (json.error) {
                 setError(json.error);
             } else if (json.orders) {
@@ -78,7 +87,7 @@ export default function OrdersPage() {
             }
         } catch (e: any) {
             console.error(e);
-            setError("Failed to fetch orders: " + e.message);
+            setError(`Connection failed: ${e.message || 'Unknown error'}`);
         } finally {
             setLoading(false);
         }

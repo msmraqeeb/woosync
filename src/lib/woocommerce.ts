@@ -3,8 +3,8 @@ import https from 'https';
 
 const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build';
 
-// The actual store URL - trying with 'www' as many stores require it
-const rawUrl = "https://www.kidsparadise.com.bd/";
+// The actual store URL
+const rawUrl = "https://kidsparadise.com.bd/";
 
 // Extremely robust URL cleaning
 let cleanUrl = rawUrl.trim();

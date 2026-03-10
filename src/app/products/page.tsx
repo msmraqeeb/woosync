@@ -77,13 +77,22 @@ export default function ProductsPage() {
         setLoading(true);
         try {
             const res = await fetch(`/api/products?page=${currentPage}&per_page=20&search=${encodeURIComponent(search)}`);
-            const json = await res.json();
+            const contentType = res.headers.get("content-type");
+
+            let json;
+            if (contentType && contentType.includes("application/json")) {
+                json = await res.json();
+            } else {
+                const text = await res.text();
+                throw new Error(`Expected JSON but got ${contentType || 'unknown'}. Body: ${text.substring(0, 100)}`);
+            }
+
             if (json.error) {
                 setError(json.error);
-            } else if (json.products) {
+            } else {
                 setProducts(json.products);
-                setTotalPages(parseInt(json.totalPages) || 1);
-                setTotalItems(parseInt(json.total) || 0);
+                setTotalItems(parseInt(json.total || "0"));
+                setTotalPages(parseInt(json.totalPages || "1"));
                 setInputPage(currentPage.toString());
                 setError(null);
             }

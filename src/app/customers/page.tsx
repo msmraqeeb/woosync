@@ -32,15 +32,24 @@ export default function CustomersPage() {
         setLoading(true);
         try {
             const res = await fetch("/api/customers?per_page=20");
-            const json = await res.json();
+            const contentType = res.headers.get("content-type");
+
+            let json;
+            if (contentType && contentType.includes("application/json")) {
+                json = await res.json();
+            } else {
+                const text = await res.text();
+                throw new Error(`Expected JSON but got ${contentType || 'unknown'}. Body Snippet: ${text.substring(0, 100)}`);
+            }
+
             if (json.error) {
                 setError(json.error);
-            } else if (json.customers) {
+            } else {
                 setCustomers(json.customers);
                 setError(null);
             }
         } catch (err: any) {
-            console.error("Error fetching orders:", err);
+            console.error("Error fetching customers:", err);
             setError(`Connection failed: ${err.message || 'Unknown error'}`);
         } finally {
             setLoading(false);

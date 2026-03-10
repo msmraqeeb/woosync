@@ -20,7 +20,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 export default function Dashboard() {
-  const [data, setData] = useState({
+  const [data, setData] = useState<any>({
     totalOrders: "0",
     totalProducts: "0",
     totalCustomers: "0",
@@ -32,7 +32,15 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetch("/api/dashboard")
-      .then((res) => res.json())
+      .then(async (res) => {
+        const contentType = res.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+          return res.json();
+        } else {
+          const text = await res.text();
+          throw new Error(`Expected JSON but got ${contentType || 'unknown'}. Body snippet: ${text.substring(0, 100)}`);
+        }
+      })
       .then((json) => {
         if (json.error) {
           setError(json.error);
