@@ -18,7 +18,7 @@ export const api = new WooCommerceRestApi({
     version: "wc/v3",
     queryStringAuth: true, // Crucial for many shared hosting environments
     axiosConfig: {
-        timeout: 30000,
+        timeout: 8000, // Very important: must be less than Vercel's 10s Serverless function limit!
         httpsAgent: new https.Agent({
             rejectUnauthorized: false
         }),
