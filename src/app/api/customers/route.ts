@@ -21,11 +21,35 @@ export async function GET(request: Request) {
             totalPages: response.headers["x-wp-totalpages"],
         });
     } catch (error: any) {
-        const errorMsg = error.response?.data?.message || error.response?.data || error.message;
-        console.error("❌ API Error (Customers):", errorMsg);
+        console.error("❌ Raw API Error encountered:", error?.message);
+
+        let safeErrorMsg = "Unknown internal server error";
+        let safeStatus = 500;
+
+        try {
+            if (error?.response?.status && error.response.status >= 200 && error.response.status <= 599) {
+                safeStatus = error.response.status;
+            }
+
+            if (error?.message) {
+                safeErrorMsg = String(error.message);
+            }
+            if (error?.response?.data) {
+                if (typeof error.response.data === 'string') {
+                    safeErrorMsg = error.response.data.substring(0, 150);
+                } else if (error.response.data.message) {
+                    safeErrorMsg = String(error.response.data.message);
+                } else {
+                    safeErrorMsg = JSON.stringify(error.response.data).substring(0, 150);
+                }
+            }
+        } catch (e) {
+            console.error("Failed to parse error details", e);
+        }
+
         return NextResponse.json(
-            { error: errorMsg },
-            { status: error.response?.status || 500 }
+            { error: safeErrorMsg },
+            { status: safeStatus }
         );
     }
 }
